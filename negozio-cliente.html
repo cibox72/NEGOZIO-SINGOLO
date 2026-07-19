@@ -53,7 +53,7 @@
 <label>Password:</label>
 <input type="password" id="adminPassword" placeholder="Password admin" required>
 </div>
-<button type="submit" class="btn btn-primary" style="width:100%;padding:14px;font-size:16px">️ Accedi</button>
+<button type="submit" class="btn btn-primary" style="width:100%;padding:14px;font-size:16px">🔐 Accedi</button>
 </form>
 <div id="adminLoginError" class="error-message"></div>
 <p style="margin-top:20px"><a href="#" onclick="showClientLogin()" style="color:#667eea">← Torna al login cliente</a></p>
@@ -99,7 +99,7 @@
 </div>
 <div class="panel">
 <h2>🛒 Carrello (<span id="cartCount">0</span>)</h2>
-<button class="btn btn-danger btn-sm" onclick="clearCart()">🗑️ Svuota</button>
+<button class="btn btn-danger btn-sm" onclick="clearCart()">️ Svuota</button>
 <div id="cartItems" style="margin-top:15px"></div>
 <div class="cart-total">Totale: € <span id="cartTotal">0.00</span></div>
 <div class="cart-info-box">
@@ -107,7 +107,7 @@
 Il ritiro dei prodotti avviene presso il nostro Studio.<br>
 ⚠️ Eventuali spedizioni sono a carico del cliente.<br>
 <div class="studio-address">
- <strong>G&L Studio</strong><br>
+<strong>G&L Studio</strong><br>
 Via Ciarrocco, 21 – Canicattì (AG)<br>
 Tel: 3206337370 - 3669381103<br>
 Email: weddinggel@aruba.it
@@ -140,7 +140,7 @@ Email: weddinggel@aruba.it
 <h2>Ordine Completato!</h2>
 <p class="thanks-message">Grazie per aver scelto G&L Studio!<br>Il tuo ordine è stato registrato correttamente.</p>
 <div class="order-summary">
-<h3>📋 Riepilogo Ordine</h3>
+<h3> Riepilogo Ordine</h3>
 <p><strong>Numero Ordine:</strong> <span id="successOrderId"></span></p>
 <p><strong>Cliente:</strong> <span id="successClientName"></span></p>
 <p><strong>Totale:</strong> € <span id="successTotal"></span></p>
@@ -157,7 +157,7 @@ Email: weddinggel@aruba.it
 <p>Il ritiro avviene presso il nostro Studio:</p>
 <p>📌 Via Ciarrocco, 21 – Canicattì (AG)</p>
 <p>📞 Tel: 3206337370 - 3669381103</p>
-<p> Email: weddinggel@aruba.it</p>
+<p>📧 Email: weddinggel@aruba.it</p>
 <p>⚠️ Eventuali spedizioni sono a carico del cliente.</p>
 </div>
 <p style="margin-top:20px;color:#666">G&L Studio ti contatterà presto per confermare la disponibilità dei prodotti e concordare il ritiro.</p>
@@ -173,7 +173,6 @@ let currentClient = null;
 let currentPhoto = null;
 let cart = [];
 
-// Check URL params
 const urlParams = new URLSearchParams(window.location.search);
 const mode = urlParams.get('mode');
 
@@ -197,7 +196,6 @@ function showClientLogin() {
     document.getElementById('adminSection').style.display = 'none';
 }
 
-// Client login
 document.getElementById('clientLoginForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const code = document.getElementById('clientCode').value.trim().toUpperCase();
@@ -214,7 +212,6 @@ document.getElementById('clientLoginForm').addEventListener('submit', function(e
     renderClientView();
 });
 
-// Admin login
 document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const pass = document.getElementById('adminPassword').value;
@@ -238,7 +235,7 @@ function showTab(tab) {
     event.target.classList.add('active');
     renderNegozioSection();
     setTimeout(() => {
-        const tabBtn = document.querySelector(`#negozio .tab-btn[onclick*="${tab}"]`);
+        const tabBtn = document.querySelector('#negozio .tab-btn[onclick*="' + tab + '"]');
         if (tabBtn) showShopTab(tab, tabBtn);
     }, 100);
 }
@@ -249,19 +246,11 @@ function renderClientView() {
         container.innerHTML = '<p style="color:#888;text-align:center;padding:40px">Nessuna foto disponibile. Contatta lo studio per caricare le tue foto.</p>';
         return;
     }
-    container.innerHTML = currentClient.albums.map(album => `
-        <div class="album-section">
-            <h3>📁 ${album.name} <span class="photo-count">${album.photos ? album.photos.length : 0} foto</span></h3>
-            <div class="photo-grid">
-                ${(album.photos || []).map((photo, idx) => `
-                    <div class="photo-card" onclick="openProductModal('${photo.url}', '${photo.name}', '${album.name}')">
-                        <img src="${photo.url}" alt="${photo.name}">
-                        <div class="add-icon">+</div>
-                    </div>
-                `).join('')}
-            </div>
-        </div>
-    `).join('');
+    container.innerHTML = currentClient.albums.map(album => {
+        return '<div class="album-section"><h3> ' + album.name + ' <span class="photo-count">' + (album.photos ? album.photos.length : 0) + ' foto</span></h3><div class="photo-grid">' + (album.photos || []).map(function(photo, idx) {
+            return '<div class="photo-card" onclick="openProductModal(\'' + photo.url + '\', \'' + photo.name + '\', \'' + album.name + '\')"><img src="' + photo.url + '" alt="' + photo.name + '"><div class="add-icon">+</div></div>';
+        }).join('') + '</div></div>';
+    }).join('');
 }
 
 function openProductModal(photoUrl, photoName, albumName) {
@@ -269,14 +258,14 @@ function openProductModal(photoUrl, photoName, albumName) {
     document.getElementById('modalPhotoPreview').src = photoUrl;
     const db = getShopDB();
     const categories = ['stampa', 'tele', 'forex', 'gadget', 'plex'];
-    const catLabels = { stampa: '🖼️ Stampe', tele: '🖼️ Tele', forex: '🖼️ Forex', gadget: '🎁 Gadget', plex: '🖼️ Plexiglass' };
+    const catLabels = { stampa: '🖼️ Stampe', tele: '🖼️ Tele', forex: '🖼️ Forex', gadget: ' Gadget', plex: '🖼️ Plexiglass' };
     let html = '';
-    categories.forEach(cat => {
-        const products = db.products.filter(p => p.category === cat);
+    categories.forEach(function(cat) {
+        const products = db.products.filter(function(p) { return p.category === cat; });
         if (products.length > 0) {
             html += '<div class="products-section"><h3>' + catLabels[cat] + '</h3><div class="product-grid">';
-            products.forEach(p => {
-                html += '<div class="product-card">' + (p.image ? '<img src="' + p.image + '" alt="' + p.name + '">' : '') + '<div class="name">' + p.name + '</div><div class="desc">' + (p.size || '') + '</div><div class="price">€ ' + p.price.toFixed(2) + '</div>' + (p.colors && p.colors.length ? '<div style="font-size:11px;color:#666">Colori: ' + p.colors.join(', ') + '</div>' : '') + '<button class="btn btn-success btn-sm" onclick="addToCart(\'' + p.id + '\')" style="margin-top:10px;width:100%"> Aggiungi</button></div>';
+            products.forEach(function(p) {
+                html += '<div class="product-card">' + (p.image ? '<img src="' + p.image + '" alt="' + p.name + '">' : '') + '<div class="name">' + p.name + '</div><div class="desc">' + (p.size || '') + '</div><div class="price">€ ' + p.price.toFixed(2) + '</div>' + (p.colors && p.colors.length ? '<div style="font-size:11px;color:#666">Colori: ' + p.colors.join(', ') + '</div>' : '') + '<button class="btn btn-success btn-sm" onclick="addToCart(' + p.id + ')" style="margin-top:10px;width:100%">🛒 Aggiungi</button></div>';
             });
             html += '</div></div>';
         }
@@ -291,7 +280,7 @@ function closeProductModal() {
 
 function addToCart(productId) {
     const db = getShopDB();
-    const product = db.products.find(p => p.id === parseInt(productId));
+    const product = db.products.find(function(p) { return p.id === parseInt(productId); });
     if (!product) return;
     cart.push({
         productId: product.id,
@@ -311,14 +300,16 @@ function addToCart(productId) {
 
 function updateCart() {
     document.getElementById('cartCount').textContent = cart.length;
-    const total = cart.reduce((sum, item) => sum + item.price, 0);
+    const total = cart.reduce(function(sum, item) { return sum + item.price; }, 0);
     document.getElementById('cartTotal').textContent = total.toFixed(2);
     const container = document.getElementById('cartItems');
     if (cart.length === 0) {
         container.innerHTML = '<p style="color:#888;text-align:center;padding:20px">Carrello vuoto</p>';
         return;
     }
-    container.innerHTML = cart.map((item, idx) => '<div class="cart-item"><img src="' + item.photoUrl + '" class="cart-item-img" alt=""><div class="cart-item-info"><strong>' + item.productName + '</strong><small>📁 ' + item.albumName + ' • ' + item.photoName + '</small></div><div class="cart-item-price">€' + item.price.toFixed(2) + '</div><button class="cart-item-remove" onclick="removeFromCart(' + idx + ')">&times;</button></div>').join('');
+    container.innerHTML = cart.map(function(item, idx) {
+        return '<div class="cart-item"><img src="' + item.photoUrl + '" class="cart-item-img" alt=""><div class="cart-item-info"><strong>' + item.productName + '</strong><small>📁 ' + item.albumName + ' • ' + item.photoName + '</small></div><div class="cart-item-price">€' + item.price.toFixed(2) + '</div><button class="cart-item-remove" onclick="removeFromCart(' + idx + ')">&times;</button></div>';
+    }).join('');
 }
 
 function removeFromCart(idx) {
@@ -338,11 +329,11 @@ function completeOrder() {
         alert('Il carrello è vuoto!');
         return;
     }
-    if (!confirm('Confermi l\'ordine di ' + cart.length + ' prodotti per un totale di € ' + cart.reduce((sum, item) => sum + item.price, 0).toFixed(2) + '?')) return;
+    if (!confirm('Confermi l\'ordine di ' + cart.length + ' prodotti per un totale di € ' + cart.reduce(function(sum, item) { return sum + item.price; }, 0).toFixed(2) + '?')) return;
     
     const db = getShopDB();
     const orderId = 'ORD-' + Date.now();
-    const total = cart.reduce((sum, item) => sum + item.price, 0);
+    const total = cart.reduce(function(sum, item) { return sum + item.price; }, 0);
     const order = {
         id: orderId,
         date: new Date().toLocaleString('it-IT'),
@@ -355,7 +346,6 @@ function completeOrder() {
     db.orders.push(order);
     saveShopDB(db);
     
-    // Generate PDF
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     doc.setFontSize(22);
@@ -370,7 +360,7 @@ function completeOrder() {
     doc.text('Prodotti ordinati:', 20, 105);
     let y = 115;
     doc.setFontSize(11);
-    cart.forEach((item, i) => {
+    cart.forEach(function(item, i) {
         doc.text((i + 1) + '. ' + item.productName, 25, y);
         doc.text('   Album: ' + item.albumName, 25, y + 6);
         doc.text('   Foto: ' + item.photoName, 25, y + 12);
@@ -387,8 +377,7 @@ function completeOrder() {
     doc.text('TOTALE: € ' + total.toFixed(2), 20, y + 15);
     doc.save('ORDINE_' + orderId + '.pdf');
     
-    // Generate GRU file
-    const gruContent = cart.map(item => item.photoName).join('\n');
+    const gruContent = cart.map(function(item) { return item.photoName; }).join('\n');
     const blob = new Blob([gruContent], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -398,7 +387,6 @@ function completeOrder() {
     a.click();
     URL.revokeObjectURL(url);
     
-    // Show success
     document.getElementById('clientSection').style.display = 'none';
     document.getElementById('successScreen').style.display = 'block';
     document.getElementById('successOrderId').textContent = orderId;
@@ -410,7 +398,6 @@ function completeOrder() {
     cart = [];
 }
 
-// Close modal on outside click
 document.getElementById('productModal').addEventListener('click', function(e) {
     if (e.target === this) closeProductModal();
 });
