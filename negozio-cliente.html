@@ -37,7 +37,7 @@
 <!-- LOGIN CLIENTE -->
 <div id="loginSection" class="login-section">
 <div class="login-container">
-<h1>️ Negozio Online G&L Studio</h1>
+<h1>🛍️ Negozio Online G&L Studio</h1>
 <p>Inserisci il tuo codice cliente per accedere</p>
 <form id="clientLoginForm">
 <div class="form-group">
@@ -79,7 +79,7 @@
 <div class="cart-info-box">
 <strong>📍 Ritiro Prodotti:</strong><br>
 Il ritiro dei prodotti avviene presso il nostro Studio.<br>
-️ Eventuali spedizioni sono a carico del cliente.<br>
+⚠️ Eventuali spedizioni sono a carico del cliente.<br>
 <div class="studio-address">
 <strong>G&L Studio</strong><br>
 Via Ciarrocco, 21 – Canicattì (AG)<br>
@@ -122,9 +122,9 @@ Email: weddinggel@aruba.it
 </div>
 <div class="paypal-section">
 <h3>💳 Paga ora con PayPal</h3>
-<p>Clicca il pulsante per completare il pagamento:</p>
+<p>Clicca il pulsante per completare il pagamento in sicurezza:</p>
 <a id="paypalLink" href="#" target="_blank" class="paypal-btn">💳 Paga con PayPal</a>
-<p style="font-size:13px;color:#666;margin-top:10px">Verrai redirectato su PayPal per completare il pagamento in sicurezza.</p>
+<p style="font-size:13px;color:#666;margin-top:10px">Verrai reindirizzato a PayPal per pagare l'importo di <strong>€ <span id="paypalAmount"></span></strong> all'indirizzo:<br><strong>mairaluigi@hotmail.it</strong></p>
 </div>
 <div class="contact-info">
 <h3>📞 Contatta lo Studio</h3>
@@ -182,7 +182,7 @@ function openProductModal(photoUrl, photoName, albumName) {
     document.getElementById('modalPhotoPreview').src = photoUrl;
     const db = getShopDB();
     const categories = ['stampa', 'tele', 'forex', 'gadget', 'plex'];
-    const catLabels = { stampa: '🖼️ Stampe', tele: '️ Tele', forex: '🖼️ Forex', gadget: '🎁 Gadget', plex: '🖼️ Plexiglass' };
+    const catLabels = { stampa: '🖼️ Stampe', tele: '🖼️ Tele', forex: '🖼️ Forex', gadget: '🎁 Gadget', plex: '🖼️ Plexiglass' };
     let html = '';
     categories.forEach(function(cat) {
         const products = db.products.filter(function(p) { return p.category === cat; });
@@ -299,7 +299,9 @@ function completeOrder() {
     doc.text('TOTALE: € ' + total.toFixed(2), 20, y + 15);
     doc.save('ORDINE_' + orderId + '.pdf');
     
-    // ❌ RIMOSSO: File GRU (.txt) - serve solo allo studio, non al cliente
+    // ✅ LINK PAYPAL AGGIORNATO CON LA TUA EMAIL
+    const paypalEmail = 'mairaluigi@hotmail.it';
+    const paypalUrl = 'https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=' + encodeURIComponent(paypalEmail) + '&currency_code=EUR&amount=' + total.toFixed(2) + '&item_name=Ordine_G_Studio_' + orderId;
     
     // Mostra schermata successo
     document.getElementById('clientSection').style.display = 'none';
@@ -308,7 +310,8 @@ function completeOrder() {
     document.getElementById('successClientName').textContent = currentClient.name;
     document.getElementById('successTotal').textContent = total.toFixed(2);
     document.getElementById('successDate').textContent = order.date;
-    document.getElementById('paypalLink').href = 'https://paypal.me/mairaluigi/' + total.toFixed(2);
+    document.getElementById('paypalAmount').textContent = total.toFixed(2); // Mostra l'importo nel testo
+    document.getElementById('paypalLink').href = paypalUrl;
     
     cart = [];
 }
