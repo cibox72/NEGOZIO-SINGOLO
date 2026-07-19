@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - Negozio G&L Studio</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+<style>
+.login-container{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:20px}
+.login-box{background:#fff;padding:40px;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.2);max-width:500px;width:100%}
+.login-box h1{color:#2c3e50;margin-bottom:10px;text-align:center}
+.login-box p{color:#666;margin-bottom:30px;text-align:center}
+.form-group{margin-bottom:20px}
+.form-group label{display:block;margin-bottom:8px;color:#555;font-weight:600}
+.form-group input{width:100%;padding:14px;border:2px solid #ddd;border-radius:8px;font-size:16px}
+.form-group input:focus{outline:none;border-color:#667eea}
+.btn{width:100%;padding:14px;background:#667eea;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer}
+.btn:hover{background:#5568d3}
+.error-message{color:#e74c3c;margin-top:15px;text-align:center;font-weight:600}
+.back-link{text-align:center;margin-top:20px}
+.back-link a{color:#667eea;text-decoration:none}
+</style>
+</head>
+<body>
+
+<div id="loginSection" class="login-container">
+<div class="login-box">
+<h1>⚙️ Area Admin - Negozio</h1>
+<p>Inserisci la password per accedere</p>
+<form id="adminLoginForm">
+<div class="form-group">
+<label>Password:</label>
+<input type="password" id="adminPassword" placeholder="Password admin" required>
+</div>
+<button type="submit" class="btn"> Accedi</button>
+<div id="loginError" class="error-message"></div>
+</form>
+<div class="back-link">
+<a href="negozio-cliente.html">← Torna al negozio</a>
+</div>
+</div>
+</div>
+
+<div id="adminSection" style="display:none">
+<header class="main-header">
+<h1>⚙️ Dashboard Admin - Negozio</h1>
+<p>G&L Studio - Gestione completa</p>
+</header>
+<nav class="main-nav">
+<button class="nav-btn active" onclick="showTab('clienti')"> Clienti</button>
+<button class="nav-btn" onclick="showTab('prodotti')">️ Prodotti</button>
+<button class="nav-btn" onclick="showTab('ordini')"> Ordini</button>
+<button class="logout-btn" onclick="doLogout()">🚪 Esci</button>
+</nav>
+<div class="container">
+<div id="negozio"></div>
+</div>
+</div>
+
+<script src="shop.js"></script>
+<script>
+const ADMIN_PASSWORD = '12763Mlg';
+
+document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const pass = document.getElementById('adminPassword').value;
+    if (pass === ADMIN_PASSWORD) {
+        localStorage.setItem('negozio_admin_logged', 'true');
+        showAdminDashboard();
+    } else {
+        document.getElementById('loginError').textContent = '❌ Password errata!';
+    }
+});
+
+function showAdminDashboard() {
+    document.getElementById('loginSection').style.display = 'none';
+    document.getElementById('adminSection').style.display = 'block';
+    renderNegozioSection();
+}
+
+function doLogout() {
+    localStorage.removeItem('negozio_admin_logged');
+    location.reload();
+}
+
+function showTab(tab) {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    renderNegozioSection();
+    setTimeout(() => {
+        const tabBtn = document.querySelector('#negozio .tab-btn[onclick*="' + tab + '"]');
+        if (tabBtn) showShopTab(tab, tabBtn);
+    }, 100);
+}
+
+function checkLoginStatus() {
+    if (localStorage.getItem('negozio_admin_logged') === 'true') {
+        showAdminDashboard();
+    }
+}
+
+checkLoginStatus();
+</script>
+</body>
+</html>
