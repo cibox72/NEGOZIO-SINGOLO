@@ -1,8 +1,6 @@
-// ============ CONFIG NEGOZIO ============
 const SHOP_DB_KEY = 'gl_negozio_db';
-const SHOP_LINK = window.location.origin + window.location.pathname.replace('index.html', '') + 'client.html';
+const SHOP_LINK = window.location.origin + window.location.pathname.replace('index.html', '') + 'negozio-cliente.html';
 
-// ============ DATABASE NEGOZIO ============
 function getShopDB() {
     try {
         const d = JSON.parse(localStorage.getItem(SHOP_DB_KEY));
@@ -15,153 +13,18 @@ function saveShopDB(db) {
     localStorage.setItem(SHOP_DB_KEY, JSON.stringify(db));
 }
 
-// ============ INIZIALIZZAZIONE ============
 function initShopAdmin() {}
 
 function renderNegozioSection() {
     const container = document.getElementById('negozio');
     if (!container) return;
-    container.innerHTML = `
-        <div class="shop-container">
-            <div class="shop-header">
-                <h1>🛍️ Negozio Online - Admin</h1>
-                <p>Gestione clienti, prodotti e ordini</p>
-            </div>
-            <div class="backup-bar">
-                <strong>💾 Backup & Ripristino:</strong>
-                <button class="btn btn-success btn-sm" onclick="backupShopData()">📥 Scarica Backup</button>
-                <button class="btn btn-warning btn-sm" onclick="document.getElementById('shopRestoreFile').click()">🔄 Ripristina</button>
-                <input type="file" id="shopRestoreFile" accept=".json" style="display:none" onchange="restoreShopData(this)">
-                <button class="btn btn-info btn-sm" onclick="exportShopOrdersPDF()">📄 Esporta Ordini PDF</button>
-            </div>
-            <div class="shop-link-bar">
-                <strong> Link Negozio (da inviare ai clienti):</strong>
-                <input type="text" value="${SHOP_LINK}" readonly>
-                <button onclick="copyShopLink(this)">📋 Copia Link</button>
-            </div>
-            <div class="tabs">
-                <button class="tab-btn active" onclick="showShopTab('clienti', this)"> Clienti</button>
-                <button class="tab-btn" onclick="showShopTab('prodotti', this)">🛍️ Prodotti</button>
-                <button class="tab-btn" onclick="showShopTab('ordini', this)">📋 Ordini</button>
-            </div>
-            <div id="shop-tab-clienti" class="tab-content active">
-                <div class="shop-card">
-                    <h2>➕ Crea Nuovo Negozio per Cliente</h2>
-                    <div class="info-box">
-                        <strong>ℹ️ Come funziona:</strong><br>
-                        Inserisci il nome del cliente. Il sistema genera un <strong>Codice Cliente univoco</strong> (es: GL-ABC123).
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Nome Cliente:</label>
-                            <input type="text" id="newClientName" placeholder="Es. Mario e Lucia Rossi">
-                        </div>
-                        <div class="form-group">
-                            <label>Email (opzionale):</label>
-                            <input type="email" id="newClientEmail" placeholder="email@esempio.it">
-                        </div>
-                    </div>
-                    <button class="btn btn-success" onclick="createShopClient()">✅ Crea Negozio e Genera Codice</button>
-                </div>
-                <div class="shop-card">
-                    <h2>👥 Clienti Registrati</h2>
-                    <div id="shopClientsList" class="client-grid"></div>
-                </div>
-                <div class="shop-card">
-                    <h2>📸 Carica Foto per Cliente (con Album/Cartelle)</h2>
-                    <div class="info-box">
-                        <strong> Come organizzare le foto in cartelle:</strong><br>
-                        1. Seleziona il cliente<br>
-                        2. Scrivi il nome dell'album (es: "Casa Sposo", "Chiesa", "Ricevimento")<br>
-                        3. Clicca "Apri Widget" e carica le foto<br>
-                        4. Clicca "Salva Foto"<br>
-                        5. Ripeti per ogni cartella con lo stesso cliente
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Seleziona Cliente:</label>
-                            <select id="shopPhotoClientSelect"></select>
-                        </div>
-                        <div class="form-group">
-                            <label>Nome Album/Cartella:</label>
-                            <input type="text" id="shopAlbumName" placeholder="Es: Casa Sposo, Chiesa...">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Cloud Name Cloudinary:</label>
-                        <input type="text" id="shopCloudName" value="g3439ih4">
-                    </div>
-                    <button class="btn btn-primary" onclick="openShopUploadWidget()">📂 Apri Widget Upload</button>
-                    <div id="shopUploadStatus" style="margin-top:15px"></div>
-                    <button class="btn btn-success" id="shopSavePhotosBtn" onclick="saveShopClientPhotos()" style="display:none">💾 Salva Foto nell'Album</button>
-                </div>
-            </div>
-            <div id="shop-tab-prodotti" class="tab-content">
-                <div class="shop-card">
-                    <h2>➕ Aggiungi/Modifica Prodotto</h2>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Nome Prodotto:</label>
-                            <input type="text" id="shopProdName" placeholder="Es. Stampa 20x30">
-                        </div>
-                        <div class="form-group">
-                            <label>Categoria:</label>
-                            <select id="shopProdCategory">
-                                <option value="stampa">🖼️ Stampe</option>
-                                <option value="tele">🖼️ Tele</option>
-                                <option value="forex">🖼️ Forex</option>
-                                <option value="gadget">🎁 Gadget</option>
-                                <option value="plex">🖼️ Plexiglass</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Prezzo (€) *</label>
-                            <input type="number" id="shopProdPrice" step="0.01" placeholder="0.00" style="font-size:18px;font-weight:bold;color:#e74c3c">
-                        </div>
-                        <div class="form-group">
-                            <label>Misura/Formato:</label>
-                            <input type="text" id="shopProdSize" placeholder="Es. 20x30 cm">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Descrizione:</label>
-                        <textarea id="shopProdDesc" rows="2"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Colori (separati da virgola):</label>
-                        <input type="text" id="shopProdColors" placeholder="Es. Rosso, Blu, Bianco">
-                    </div>
-                    <div class="form-group">
-                        <label>Immagine Prodotto (URL Cloudinary):</label>
-                        <input type="text" id="shopProdImage" placeholder="https://res.cloudinary.com/...">
-                        <button class="btn btn-sm btn-secondary" onclick="uploadShopProductImage()" style="margin-top:5px">📤 Carica Immagine</button>
-                    </div>
-                    <div id="shopProdImagePreview" style="margin-top:10px"></div>
-                    <input type="hidden" id="shopEditingProductId">
-                    <button class="btn btn-success" onclick="saveShopProduct()">💾 Salva Prodotto</button>
-                    <button class="btn btn-secondary" onclick="clearShopProductForm()">🔄 Nuovo Prodotto</button>
-                </div>
-                <div class="shop-card">
-                    <h2>🛍️ Prodotti Esistenti</h2>
-                    <div id="shopProductsList" class="product-grid"></div>
-                </div>
-            </div>
-            <div id="shop-tab-ordini" class="tab-content">
-                <div class="shop-card">
-                    <h2>📋 Ordini Ricevuti</h2>
-                    <div id="shopOrdersList"></div>
-                </div>
-            </div>
-        </div>
-    `;
+    container.innerHTML = '<div class="shop-container"><div class="shop-header"><h1>🛍️ Negozio Online - Admin</h1><p>Gestione clienti, prodotti e ordini</p></div><div class="backup-bar"><strong>💾 Backup & Ripristino:</strong><button class="btn btn-success btn-sm" onclick="backupShopData()">📥 Scarica Backup</button><button class="btn btn-warning btn-sm" onclick="document.getElementById(\'shopRestoreFile\').click()">🔄 Ripristina</button><input type="file" id="shopRestoreFile" accept=".json" style="display:none" onchange="restoreShopData(this)"><button class="btn btn-info btn-sm" onclick="exportShopOrdersPDF()">📄 Esporta Ordini PDF</button></div><div class="shop-link-bar"><strong>🔗 Link Negozio (da inviare ai clienti):</strong><input type="text" value="' + SHOP_LINK + '" readonly><button onclick="copyShopLink(this)">📋 Copia Link</button></div><div class="tabs"><button class="tab-btn active" onclick="showShopTab(\'clienti\', this)">👥 Clienti</button><button class="tab-btn" onclick="showShopTab(\'prodotti\', this)">🛍️ Prodotti</button><button class="tab-btn" onclick="showShopTab(\'ordini\', this)">📋 Ordini</button></div><div id="shop-tab-clienti" class="tab-content active"><div class="shop-card"><h2>➕ Crea Nuovo Negozio per Cliente</h2><div class="info-box"><strong>ℹ️ Come funziona:</strong><br>Inserisci il nome del cliente. Il sistema genera un <strong>Codice Cliente univoco</strong> (es: GL-ABC123).</div><div class="form-row"><div class="form-group"><label>Nome Cliente:</label><input type="text" id="newClientName" placeholder="Es. Mario e Lucia Rossi"></div><div class="form-group"><label>Email (opzionale):</label><input type="email" id="newClientEmail" placeholder="email@esempio.it"></div></div><button class="btn btn-success" onclick="createShopClient()">✅ Crea Negozio e Genera Codice</button></div><div class="shop-card"><h2>👥 Clienti Registrati</h2><div id="shopClientsList" class="client-grid"></div></div><div class="shop-card"><h2>📸 Carica Foto per Cliente (con Album/Cartelle)</h2><div class="info-box"><strong>📁 Come organizzare le foto in cartelle:</strong><br>1. Seleziona il cliente<br>2. Scrivi il nome dell\'album (es: "Casa Sposo", "Chiesa", "Ricevimento")<br>3. Clicca "Apri Widget" e carica le foto<br>4. Clicca "Salva Foto"<br>5. Ripeti per ogni cartella con lo stesso cliente</div><div class="form-row"><div class="form-group"><label>Seleziona Cliente:</label><select id="shopPhotoClientSelect"></select></div><div class="form-group"><label>Nome Album/Cartella:</label><input type="text" id="shopAlbumName" placeholder="Es: Casa Sposo, Chiesa..."></div></div><div class="form-group"><label>Cloud Name Cloudinary:</label><input type="text" id="shopCloudName" value="g3439ih4"></div><button class="btn btn-primary" onclick="openShopUploadWidget()"> Apri Widget Upload</button><div id="shopUploadStatus" style="margin-top:15px"></div><button class="btn btn-success" id="shopSavePhotosBtn" onclick="saveShopClientPhotos()" style="display:none">💾 Salva Foto nell\'Album</button></div></div><div id="shop-tab-prodotti" class="tab-content"><div class="shop-card"><h2>➕ Aggiungi/Modifica Prodotto</h2><div class="form-row"><div class="form-group"><label>Nome Prodotto:</label><input type="text" id="shopProdName" placeholder="Es. Stampa 20x30"></div><div class="form-group"><label>Categoria:</label><select id="shopProdCategory"><option value="stampa">🖼️ Stampe</option><option value="tele">🖼️ Tele</option><option value="forex">🖼️ Forex</option><option value="gadget">🎁 Gadget</option><option value="plex">️ Plexiglass</option></select></div></div><div class="form-row"><div class="form-group"><label>Prezzo (€) *</label><input type="number" id="shopProdPrice" step="0.01" placeholder="0.00" style="font-size:18px;font-weight:bold;color:#e74c3c"></div><div class="form-group"><label>Misura/Formato:</label><input type="text" id="shopProdSize" placeholder="Es. 20x30 cm"></div></div><div class="form-group"><label>Descrizione:</label><textarea id="shopProdDesc" rows="2"></textarea></div><div class="form-group"><label>Colori (separati da virgola):</label><input type="text" id="shopProdColors" placeholder="Es. Rosso, Blu, Bianco"></div><div class="form-group"><label>Immagine Prodotto (URL Cloudinary):</label><input type="text" id="shopProdImage" placeholder="https://res.cloudinary.com/..."><button class="btn btn-sm btn-secondary" onclick="uploadShopProductImage()" style="margin-top:5px">📤 Carica Immagine</button></div><div id="shopProdImagePreview" style="margin-top:10px"></div><input type="hidden" id="shopEditingProductId"><button class="btn btn-success" onclick="saveShopProduct()">💾 Salva Prodotto</button><button class="btn btn-secondary" onclick="clearShopProductForm()">🔄 Nuovo Prodotto</button></div><div class="shop-card"><h2>🛍️ Prodotti Esistenti</h2><div id="shopProductsList" class="product-grid"></div></div></div><div id="shop-tab-ordini" class="tab-content"><div class="shop-card"><h2>📋 Ordini Ricevuti</h2><div id="shopOrdersList"></div></div></div></div>';
     loadShopAdminData();
 }
 
 function showShopTab(tab, btn) {
-    document.querySelectorAll('#negozio .tab-content').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('#negozio .tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('#negozio .tab-content').forEach(function(t) { t.classList.remove('active'); });
+    document.querySelectorAll('#negozio .tab-btn').forEach(function(b) { b.classList.remove('active'); });
     document.getElementById('shop-tab-' + tab).classList.add('active');
     btn.classList.add('active');
 }
@@ -200,7 +63,7 @@ function createShopClient() {
 function deleteShopClient(id) {
     if (!confirm('Eliminare questo cliente?')) return;
     const db = getShopDB();
-    db.clients = db.clients.filter(c => c.id !== id);
+    db.clients = db.clients.filter(function(c) { return c.id !== id; });
     saveShopDB(db);
     loadShopAdminData();
 }
@@ -224,7 +87,7 @@ function openShopUploadWidget() {
         uploadPreset: 'unsigned',
         sources: ['local'],
         multiple: true
-    }, (error, result) => {
+    }, function(error, result) {
         if (!error && result.event === 'success') {
             shopTempPhotos.push({
                 url: result.info.secure_url,
@@ -243,9 +106,9 @@ function saveShopClientPhotos() {
     const albumName = document.getElementById('shopAlbumName').value.trim();
     if (!clientId || shopTempPhotos.length === 0 || !albumName) return;
     const db = getShopDB();
-    const client = db.clients.find(c => c.id === clientId);
+    const client = db.clients.find(function(c) { return c.id === clientId; });
     if (client) {
-        let album = client.albums.find(a => a.name.toLowerCase() === albumName.toLowerCase());
+        let album = client.albums.find(function(a) { return a.name.toLowerCase() === albumName.toLowerCase(); });
         if (album) {
             album.photos = [...album.photos, ...shopTempPhotos];
         } else {
@@ -273,7 +136,7 @@ function uploadShopProductImage() {
         uploadPreset: 'unsigned',
         sources: ['local'],
         maxFiles: 1
-    }, (error, result) => {
+    }, function(error, result) {
         if (!error && result.event === 'success') {
             document.getElementById('shopProdImage').value = result.info.secure_url;
             document.getElementById('shopProdImagePreview').innerHTML = '<img src="' + result.info.secure_url + '" style="max-width:200px;border-radius:8px">';
@@ -289,7 +152,7 @@ function saveShopProduct() {
     const price = parseFloat(document.getElementById('shopProdPrice').value);
     const size = document.getElementById('shopProdSize').value.trim();
     const desc = document.getElementById('shopProdDesc').value.trim();
-    const colors = document.getElementById('shopProdColors').value.split(',').map(c => c.trim()).filter(c => c);
+    const colors = document.getElementById('shopProdColors').value.split(',').map(function(c) { return c.trim(); }).filter(function(c) { return c; });
     const image = document.getElementById('shopProdImage').value.trim();
     if (!name || !price) {
         alert('Nome e Prezzo sono obbligatori!');
@@ -307,7 +170,7 @@ function saveShopProduct() {
         image: image
     };
     if (id) {
-        const idx = db.products.findIndex(p => p.id === parseInt(id));
+        const idx = db.products.findIndex(function(p) { return p.id === parseInt(id); });
         if (idx >= 0) db.products[idx] = product;
     } else {
         db.products.push(product);
@@ -320,7 +183,7 @@ function saveShopProduct() {
 
 function editShopProduct(id) {
     const db = getShopDB();
-    const p = db.products.find(x => x.id === id);
+    const p = db.products.find(function(x) { return x.id === id; });
     if (!p) return;
     document.getElementById('shopEditingProductId').value = p.id;
     document.getElementById('shopProdName').value = p.name;
@@ -337,21 +200,21 @@ function editShopProduct(id) {
 function deleteShopProduct(id) {
     if (!confirm('Eliminare questo prodotto?')) return;
     const db = getShopDB();
-    db.products = db.products.filter(p => p.id !== id);
+    db.products = db.products.filter(function(p) { return p.id !== id; });
     saveShopDB(db);
     loadShopAdminData();
 }
 
 function clearShopProductForm() {
-    ['shopEditingProductId', 'shopProdName', 'shopProdPrice', 'shopProdSize', 'shopProdDesc', 'shopProdColors', 'shopProdImage'].forEach(id => document.getElementById(id).value = '');
+    ['shopEditingProductId', 'shopProdName', 'shopProdPrice', 'shopProdSize', 'shopProdDesc', 'shopProdColors', 'shopProdImage'].forEach(function(id) { document.getElementById(id).value = ''; });
     document.getElementById('shopProdCategory').value = 'stampa';
     document.getElementById('shopProdImagePreview').innerHTML = '';
 }
 
 function getShopCategoryLabel(cat) {
     const labels = {
-        stampa: '️ Stampa',
-        gadget: ' Gadget',
+        stampa: '🖼️ Stampa',
+        gadget: '🎁 Gadget',
         tele: '🖼️ Tela',
         forex: '🖼️ Forex',
         plex: '🖼️ Plexiglass'
@@ -365,39 +228,41 @@ function loadShopAdminData() {
     if (db.clients.length === 0) {
         clientsList.innerHTML = '<p style="color:#888;text-align:center;padding:20px;grid-column:1/-1">Nessun cliente registrato</p>';
     } else {
-        clientsList.innerHTML = db.clients.map(c => {
+        clientsList.innerHTML = db.clients.map(function(c) {
             let totalPhotos = 0;
             let albumsInfo = '';
             if (c.albums && c.albums.length > 0) {
-                c.albums.forEach(a => {
+                c.albums.forEach(function(a) {
                     totalPhotos += (a.photos ? a.photos.length : 0);
                     albumsInfo += '<span class="album-tag">📁 ' + a.name + ' (' + (a.photos ? a.photos.length : 0) + ')</span>';
                 });
             }
-            return '<div class="client-card"><h3>' + c.name + '</h3><div class="code">🔑 ' + c.code + '<button class="code-btn" onclick="copyShopClientCode(\'' + c.code + '\',this)">📋 Copia</button></div><div style="font-size:13px;color:#666">📧 ' + (c.email || 'Nessuna email') + '<br>📸 ' + totalPhotos + ' foto in ' + (c.albums ? c.albums.length : 0) + ' album<br> ' + c.created + '</div><div style="margin:10px 0">' + (albumsInfo || '<em style="color:#999">Nessun album</em>') + '</div><div class="shop-link">🔗 <input type="text" value="' + SHOP_LINK + '" readonly><button onclick="copyShopLinkForClient(\'' + c.code + '\',this)">📋 Copia per cliente</button></div><div style="margin-top:10px"><button class="btn btn-sm btn-danger" onclick="deleteShopClient(' + c.id + ')">🗑️ Elimina</button></div></div>';
+            return '<div class="client-card"><h3>' + c.name + '</h3><div class="code">🔑 ' + c.code + '<button class="code-btn" onclick="copyShopClientCode(\'' + c.code + '\',this)">📋 Copia</button></div><div style="font-size:13px;color:#666">📧 ' + (c.email || 'Nessuna email') + '<br>📸 ' + totalPhotos + ' foto in ' + (c.albums ? c.albums.length : 0) + ' album<br>📅 ' + c.created + '</div><div style="margin:10px 0">' + (albumsInfo || '<em style="color:#999">Nessun album</em>') + '</div><div class="shop-link">🔗 <input type="text" value="' + SHOP_LINK + '" readonly><button onclick="copyShopLinkForClient(\'' + c.code + '\',this)">📋 Copia per cliente</button></div><div style="margin-top:10px"><button class="btn btn-sm btn-danger" onclick="deleteShopClient(' + c.id + ')">️ Elimina</button></div></div>';
         }).join('');
     }
     const photoSelect = document.getElementById('shopPhotoClientSelect');
     if (photoSelect) {
-        photoSelect.innerHTML = '<option value="">-- Seleziona Cliente --</option>' + db.clients.map(c => '<option value="' + c.id + '">' + c.name + ' (' + c.code + ')</option>').join('');
+        photoSelect.innerHTML = '<option value="">-- Seleziona Cliente --</option>' + db.clients.map(function(c) { return '<option value="' + c.id + '">' + c.name + ' (' + c.code + ')</option>'; }).join('');
     }
     const productsList = document.getElementById('shopProductsList');
     if (db.products.length === 0) {
         productsList.innerHTML = '<p style="color:#888;text-align:center;padding:20px;grid-column:1/-1">Nessun prodotto</p>';
     } else {
-        productsList.innerHTML = db.products.map(p => '<div class="product-card">' + (p.image ? '<img src="' + p.image + '" alt="' + p.name + '">' : '') + '<div class="name">' + p.name + '</div><div class="desc">' + getShopCategoryLabel(p.category) + (p.size ? ' • ' + p.size : '') + '</div><div class="price">€ ' + p.price.toFixed(2) + '</div>' + (p.colors && p.colors.length ? '<div style="font-size:11px;color:#666">Colori: ' + p.colors.join(', ') + '</div>' : '') + '<div style="margin-top:10px"><button class="btn btn-sm btn-warning" onclick="editShopProduct(' + p.id + ')">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteShopProduct(' + p.id + ')">🗑️</button></div></div>').join('');
+        productsList.innerHTML = db.products.map(function(p) {
+            return '<div class="product-card">' + (p.image ? '<img src="' + p.image + '" alt="' + p.name + '">' : '') + '<div class="name">' + p.name + '</div><div class="desc">' + getShopCategoryLabel(p.category) + (p.size ? ' • ' + p.size : '') + '</div><div class="price">€ ' + p.price.toFixed(2) + '</div>' + (p.colors && p.colors.length ? '<div style="font-size:11px;color:#666">Colori: ' + p.colors.join(', ') + '</div>' : '') + '<div style="margin-top:10px"><button class="btn btn-sm btn-warning" onclick="editShopProduct(' + p.id + ')">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteShopProduct(' + p.id + ')">🗑️</button></div></div>';
+        }).join('');
     }
     loadShopOrders();
 }
 
 function copyToClipboard(text, btnElement) {
-    navigator.clipboard.writeText(text).then(() => {
+    navigator.clipboard.writeText(text).then(function() {
         const t = btnElement.textContent;
         btnElement.textContent = '✅ Copiato!';
-        setTimeout(() => {
+        setTimeout(function() {
             btnElement.textContent = t;
         }, 2000);
-    }).catch(() => {
+    }).catch(function() {
         const ta = document.createElement('textarea');
         ta.value = text;
         document.body.appendChild(ta);
@@ -406,7 +271,7 @@ function copyToClipboard(text, btnElement) {
         document.body.removeChild(ta);
         const t = btnElement.textContent;
         btnElement.textContent = '✅ Copiato!';
-        setTimeout(() => {
+        setTimeout(function() {
             btnElement.textContent = t;
         }, 2000);
     });
@@ -437,7 +302,7 @@ function backupShopData() {
     a.download = 'backup_negozio_' + new Date().toISOString().split('T')[0] + '.json';
     document.body.appendChild(a);
     a.click();
-    setTimeout(() => {
+    setTimeout(function() {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
     }, 100);
@@ -460,7 +325,7 @@ function restoreShopData(input) {
             alert('✅ Ripristino completato!');
             location.reload();
         } catch (err) {
-            alert(' Errore: ' + err.message);
+            alert('❌ Errore: ' + err.message);
         }
         input.value = '';
     };
@@ -482,10 +347,10 @@ function exportShopOrdersPDF() {
     doc.setTextColor(100);
     doc.text('Data: ' + new Date().toLocaleString('it-IT'), 14, 30);
     doc.text('Totale ordini: ' + db.orders.length, 14, 37);
-    const tot = db.orders.reduce((sum, o) => sum + o.total, 0);
+    const tot = db.orders.reduce(function(sum, o) { return sum + o.total; }, 0);
     doc.text('Fatturato: € ' + tot.toFixed(2), 14, 44);
     doc.line(14, 48, 196, 48);
-    const tableData = db.orders.map(o => [o.id, o.date.split(' ')[0], o.clientName, o.clientCode, o.items.length.toString(), '€ ' + o.total.toFixed(2), o.status === 'completed' ? 'Completato' : 'In attesa']);
+    const tableData = db.orders.map(function(o) { return [o.id, o.date.split(' ')[0], o.clientName, o.clientCode, o.items.length.toString(), '€ ' + o.total.toFixed(2), o.status === 'completed' ? 'Completato' : 'In attesa']; });
     doc.autoTable({
         startY: 55,
         head: [['ID', 'Data', 'Cliente', 'Codice', 'Prodotti', 'Totale', 'Stato']],
@@ -507,12 +372,14 @@ function loadShopOrders() {
         container.innerHTML = '<p style="color:#888;text-align:center;padding:40px">Nessun ordine ricevuto</p>';
         return;
     }
-    container.innerHTML = db.orders.slice().reverse().map(order => '<div class="order-card"><div class="order-header"><div><div class="order-number">' + order.id + '</div><div style="color:#666;font-size:13px">' + order.date + '</div></div><div style="text-align:right"><div style="font-weight:bold">' + order.clientName + '</div><div style="color:#666;font-size:13px">' + order.clientCode + '</div><div style="color:#667eea;font-size:13px">' + order.items.length + ' prodotti</div></div></div><div>' + order.items.map(item => '<div class="order-item-row"><span><strong>' + item.productName + '</strong> [' + getShopCategoryLabel(item.productCategory) + ']' + (item.size ? ' (' + item.size + ')' : '') + (item.color ? ' - ' + item.color : '') + '<br><small style="color:#666">📁 ' + (item.albumName || '-') + ' • Foto: ' + item.photoName + '</small></span><span style="font-weight:bold;color:#e74c3c">€' + item.price.toFixed(2) + '</span></div>').join('') + '</div><div class="order-total">Totale: €' + order.total.toFixed(2) + '</div><div class="order-actions"><button class="btn btn-sm btn-primary" onclick="downloadShopOrderPDF(\'' + order.id + '\')">📄 PDF</button><button class="btn btn-sm btn-success" onclick="downloadShopOrderGru(\'' + order.id + '\')"> File Gru</button><button class="btn btn-sm btn-warning" onclick="markShopOrderDone(\'' + order.id + '\')">✅ Completato</button><button class="btn btn-sm btn-danger" onclick="deleteShopOrder(\'' + order.id + '\')">️ Elimina</button></div></div>').join('');
+    container.innerHTML = db.orders.slice().reverse().map(function(order) {
+        return '<div class="order-card"><div class="order-header"><div><div class="order-number">' + order.id + '</div><div style="color:#666;font-size:13px">' + order.date + '</div></div><div style="text-align:right"><div style="font-weight:bold">' + order.clientName + '</div><div style="color:#666;font-size:13px">' + order.clientCode + '</div><div style="color:#667eea;font-size:13px">' + order.items.length + ' prodotti</div></div></div><div>' + order.items.map(function(item) { return '<div class="order-item-row"><span><strong>' + item.productName + '</strong> [' + getShopCategoryLabel(item.productCategory) + ']' + (item.size ? ' (' + item.size + ')' : '') + (item.color ? ' - ' + item.color : '') + '<br><small style="color:#666">📁 ' + (item.albumName || '-') + ' • Foto: ' + item.photoName + '</small></span><span style="font-weight:bold;color:#e74c3c">€' + item.price.toFixed(2) + '</span></div>'; }).join('') + '</div><div class="order-total">Totale: €' + order.total.toFixed(2) + '</div><div class="order-actions"><button class="btn btn-sm btn-primary" onclick="downloadShopOrderPDF(\'' + order.id + '\')">📄 PDF</button><button class="btn btn-sm btn-success" onclick="downloadShopOrderGru(\'' + order.id + '\')">📝 File Gru</button><button class="btn btn-sm btn-warning" onclick="markShopOrderDone(\'' + order.id + '\')">✅ Completato</button><button class="btn btn-sm btn-danger" onclick="deleteShopOrder(\'' + order.id + '\')">🗑️ Elimina</button></div></div>';
+    }).join('');
 }
 
 function downloadShopOrderPDF(orderId) {
     const db = getShopDB();
-    const order = db.orders.find(o => o.id === orderId);
+    const order = db.orders.find(function(o) { return o.id === orderId; });
     if (!order) return;
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
@@ -528,7 +395,7 @@ function downloadShopOrderPDF(orderId) {
     doc.text('Prodotti ordinati:', 20, 105);
     let y = 115;
     doc.setFontSize(11);
-    order.items.forEach((item, i) => {
+    order.items.forEach(function(item, i) {
         doc.text((i + 1) + '. ' + item.productName + ' [' + getShopCategoryLabel(item.productCategory) + ']', 25, y);
         if (item.albumName) doc.text('   Album: ' + item.albumName, 25, y + 6);
         if (item.size) doc.text('   Misura: ' + item.size, 25, y + (item.albumName ? 12 : 6));
@@ -550,9 +417,9 @@ function downloadShopOrderPDF(orderId) {
 
 function downloadShopOrderGru(orderId) {
     const db = getShopDB();
-    const order = db.orders.find(o => o.id === orderId);
+    const order = db.orders.find(function(o) { return o.id === orderId; });
     if (!order) return;
-    const content = order.items.map(item => item.photoName).join('\n');
+    const content = order.items.map(function(item) { return item.photoName; }).join('\n');
     const blob = new Blob([content], {
         type: 'text/plain'
     });
@@ -567,7 +434,7 @@ function downloadShopOrderGru(orderId) {
 
 function markShopOrderDone(orderId) {
     const db = getShopDB();
-    const order = db.orders.find(o => o.id === orderId);
+    const order = db.orders.find(function(o) { return o.id === orderId; });
     if (order) {
         order.status = 'completed';
         saveShopDB(db);
@@ -579,7 +446,7 @@ function markShopOrderDone(orderId) {
 function deleteShopOrder(orderId) {
     if (!confirm('Eliminare questo ordine?')) return;
     const db = getShopDB();
-    db.orders = db.orders.filter(o => o.id !== orderId);
+    db.orders = db.orders.filter(function(o) { return o.id !== orderId; });
     saveShopDB(db);
     loadShopOrders();
 }
