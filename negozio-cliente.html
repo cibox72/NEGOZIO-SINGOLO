@@ -15,6 +15,21 @@
 .login-container p{color:#666;margin-bottom:30px}
 .error-message{color:#e74c3c;margin-top:15px;font-weight:600}
 .client-view{padding:20px;max-width:1400px;margin:0 auto}
+.success-screen{text-align:center;padding:50px 30px;background:#fff;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,.1);max-width:700px;margin:40px auto}
+.success-icon{font-size:90px;color:#27ae60;margin-bottom:15px;animation:bounceIn 0.6s}
+@keyframes bounceIn{0%{transform:scale(0)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+.success-screen h2{color:#2c3e50;margin-bottom:15px;font-size:28px}
+.success-screen .thanks-message{font-size:18px;color:#555;margin-bottom:20px;line-height:1.6}
+.success-screen .order-summary{background:#e8f4fd;padding:20px;border-radius:10px;margin:20px 0;text-align:left}
+.success-screen .order-summary h3{color:#2980b9;margin-bottom:10px}
+.success-screen .order-summary p{margin:5px 0;font-size:14px}
+.success-screen .contact-info{background:#fff3cd;padding:20px;border-radius:10px;margin:20px 0;text-align:left;border-left:4px solid #f39c12}
+.success-screen .contact-info h3{color:#d68910;margin-bottom:10px}
+.success-screen .contact-info p{margin:5px 0;font-size:14px}
+.success-screen .paypal-section{background:#f0f8ff;padding:25px;border-radius:10px;margin:20px 0;border:2px solid #0070ba}
+.success-screen .paypal-section h3{color:#0070ba;margin-bottom:15px}
+.success-screen .paypal-section .paypal-btn{display:inline-block;background:#0070ba;color:#fff;padding:15px 40px;border-radius:25px;text-decoration:none;font-weight:bold;font-size:18px;margin:10px;transition:all .3s}
+.success-screen .paypal-section .paypal-btn:hover{background:#005ea6;transform:translateY(-2px);box-shadow:0 5px 15px rgba(0,112,186,.4)}
 </style>
 </head>
 <body>
@@ -45,7 +60,7 @@
 </header>
 <div class="client-view">
 <div class="panel">
-<h2> Le Tue Foto - Organizzate per Cartelle</h2>
+<h2>📸 Le Tue Foto - Organizzate per Cartelle</h2>
 <div class="info-box">
 <strong>ℹ️ Come ordinare:</strong><br>
 1. Sfoglia le foto organizzate per cartelle<br>
@@ -64,7 +79,7 @@
 <div class="cart-info-box">
 <strong>📍 Ritiro Prodotti:</strong><br>
 Il ritiro dei prodotti avviene presso il nostro Studio.<br>
-⚠️ Eventuali spedizioni sono a carico del cliente.<br>
+️ Eventuali spedizioni sono a carico del cliente.<br>
 <div class="studio-address">
 <strong>G&L Studio</strong><br>
 Via Ciarrocco, 21 – Canicattì (AG)<br>
@@ -96,10 +111,10 @@ Email: weddinggel@aruba.it
 <!-- SUCCESS SCREEN -->
 <div id="successScreen" class="success-screen" style="display:none">
 <div class="success-icon">✅</div>
-<h2>Ordine Completato!</h2>
+<h2>Ordine Inviato con Successo!</h2>
 <p class="thanks-message">Grazie per aver scelto G&L Studio!<br>Il tuo ordine è stato registrato correttamente.</p>
 <div class="order-summary">
-<h3> Riepilogo Ordine</h3>
+<h3>📋 Riepilogo Ordine</h3>
 <p><strong>Numero Ordine:</strong> <span id="successOrderId"></span></p>
 <p><strong>Cliente:</strong> <span id="successClientName"></span></p>
 <p><strong>Totale:</strong> € <span id="successTotal"></span></p>
@@ -107,16 +122,23 @@ Email: weddinggel@aruba.it
 </div>
 <div class="paypal-section">
 <h3>💳 Paga ora con PayPal</h3>
+<p>Clicca il pulsante per completare il pagamento:</p>
 <a id="paypalLink" href="#" target="_blank" class="paypal-btn">💳 Paga con PayPal</a>
+<p style="font-size:13px;color:#666;margin-top:10px">Verrai redirectato su PayPal per completare il pagamento in sicurezza.</p>
 </div>
-<div class="pickup-info">
-<h3>📍 Ritiro Prodotti</h3>
-<p>📌 Via Ciarrocco, 21 – Canicattì (AG)</p>
-<p> Tel: 3206337370 - 3669381103</p>
+<div class="contact-info">
+<h3>📞 Contatta lo Studio</h3>
+<p><strong>Grazie per il tuo ordine!</strong></p>
+<p>Lo studio ti contatterà presto per:</p>
+<p>✅ Confermare la disponibilità dei prodotti</p>
+<p>✅ Concordare i tempi di consegna</p>
+<p>✅ Organizzare il ritiro in studio</p>
+<p style="margin-top:15px"><strong>Per informazioni immediate:</strong></p>
+<p>📞 Tel: 3206337370 - 3669381103</p>
 <p>📧 Email: weddinggel@aruba.it</p>
-<p>⚠️ Eventuali spedizioni sono a carico del cliente.</p>
+<p>📍 Via Ciarrocco, 21 – Canicattì (AG)</p>
+<p style="margin-top:15px;font-size:13px;color:#666">⚠️ Eventuali spedizioni sono a carico del cliente.</p>
 </div>
-<p style="margin-top:20px;color:#666">G&L Studio ti contatterà presto per confermare la disponibilità dei prodotti.</p>
 <button class="btn btn-primary" onclick="location.reload()" style="margin-top:20px">🔄 Torna all'inizio</button>
 </div>
 
@@ -149,7 +171,7 @@ function renderClientView() {
         return;
     }
     container.innerHTML = currentClient.albums.map(album => {
-        return '<div class="album-section"><h3> ' + album.name + ' <span class="photo-count">' + (album.photos ? album.photos.length : 0) + ' foto</span></h3><div class="photo-grid">' + (album.photos || []).map(function(photo, idx) {
+        return '<div class="album-section"><h3>📁 ' + album.name + ' <span class="photo-count">' + (album.photos ? album.photos.length : 0) + ' foto</span></h3><div class="photo-grid">' + (album.photos || []).map(function(photo, idx) {
             return '<div class="photo-card" onclick="openProductModal(\'' + photo.url + '\', \'' + photo.name + '\', \'' + album.name + '\')"><img src="' + photo.url + '" alt="' + photo.name + '"><div class="add-icon">+</div></div>';
         }).join('') + '</div></div>';
     }).join('');
@@ -160,7 +182,7 @@ function openProductModal(photoUrl, photoName, albumName) {
     document.getElementById('modalPhotoPreview').src = photoUrl;
     const db = getShopDB();
     const categories = ['stampa', 'tele', 'forex', 'gadget', 'plex'];
-    const catLabels = { stampa: '🖼️ Stampe', tele: '🖼️ Tele', forex: '️ Forex', gadget: ' Gadget', plex: '🖼️ Plexiglass' };
+    const catLabels = { stampa: '🖼️ Stampe', tele: '️ Tele', forex: '🖼️ Forex', gadget: '🎁 Gadget', plex: '🖼️ Plexiglass' };
     let html = '';
     categories.forEach(function(cat) {
         const products = db.products.filter(function(p) { return p.category === cat; });
@@ -248,6 +270,7 @@ function completeOrder() {
     db.orders.push(order);
     saveShopDB(db);
     
+    // ✅ PDF per il cliente (riepilogo ordine)
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     doc.setFontSize(22);
@@ -276,16 +299,9 @@ function completeOrder() {
     doc.text('TOTALE: € ' + total.toFixed(2), 20, y + 15);
     doc.save('ORDINE_' + orderId + '.pdf');
     
-    const gruContent = cart.map(function(item) { return item.photoName; }).join('\n');
-    const blob = new Blob([gruContent], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'GRU_' + orderId + '.txt';
-    document.body.appendChild(a);
-    a.click();
-    URL.revokeObjectURL(url);
+    // ❌ RIMOSSO: File GRU (.txt) - serve solo allo studio, non al cliente
     
+    // Mostra schermata successo
     document.getElementById('clientSection').style.display = 'none';
     document.getElementById('successScreen').style.display = 'block';
     document.getElementById('successOrderId').textContent = orderId;
