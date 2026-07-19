@@ -24,7 +24,7 @@
 </head>
 <body>
 
-<!-- LOGIN SECTION -->
+<!-- LOGIN INIZIALE -->
 <div id="loginSection" class="login-section">
 <div class="login-container">
 <h1>🛍️ Negozio Online G&L Studio</h1>
@@ -39,11 +39,11 @@
 <div id="loginError" class="error-message"></div>
 <p style="margin-top:20px;font-size:14px;color:#666">Non hai un codice? <a href="mailto:weddinggel@aruba.it" style="color:#667eea">Contattaci</a></p>
 <hr style="margin:30px 0">
-<p style="font-size:14px;color:#666">Sei admin? <a href="#" onclick="showAdminLogin()" style="color:#667eea">Accedi come Admin</a></p>
+<p style="font-size:14px;color:#666">Sei admin? <a href="#" onclick="showAdminLogin(); return false;" style="color:#667eea">Accedi come Admin</a></p>
 </div>
 </div>
 
-<!-- ADMIN LOGIN -->
+<!-- LOGIN ADMIN -->
 <div id="adminLoginSection" class="login-section" style="display:none">
 <div class="login-container">
 <h1>⚙️ Area Admin</h1>
@@ -56,7 +56,7 @@
 <button type="submit" class="btn btn-primary" style="width:100%;padding:14px;font-size:16px">🔐 Accedi</button>
 </form>
 <div id="adminLoginError" class="error-message"></div>
-<p style="margin-top:20px"><a href="#" onclick="showClientLogin()" style="color:#667eea">← Torna al login cliente</a></p>
+<p style="margin-top:20px"><a href="#" onclick="showClientLogin(); return false;" style="color:#667eea">← Torna al login cliente</a></p>
 </div>
 </div>
 
@@ -98,7 +98,7 @@
 <div id="clientAlbumsContainer"></div>
 </div>
 <div class="panel">
-<h2>🛒 Carrello (<span id="cartCount">0</span>)</h2>
+<h2> Carrello (<span id="cartCount">0</span>)</h2>
 <button class="btn btn-danger btn-sm" onclick="clearCart()">️ Svuota</button>
 <div id="cartItems" style="margin-top:15px"></div>
 <div class="cart-total">Totale: € <span id="cartTotal">0.00</span></div>
@@ -122,7 +122,7 @@ Email: weddinggel@aruba.it
 <div id="productModal" class="shop-modal-overlay">
 <div class="shop-modal-content">
 <div class="shop-modal-header">
-<h2>🛒 Scegli il Prodotto per questa Foto</h2>
+<h2> Scegli il Prodotto per questa Foto</h2>
 <button class="shop-modal-close" onclick="closeProductModal()">&times;</button>
 </div>
 <div class="shop-modal-body">
@@ -140,14 +140,14 @@ Email: weddinggel@aruba.it
 <h2>Ordine Completato!</h2>
 <p class="thanks-message">Grazie per aver scelto G&L Studio!<br>Il tuo ordine è stato registrato correttamente.</p>
 <div class="order-summary">
-<h3> Riepilogo Ordine</h3>
+<h3>📋 Riepilogo Ordine</h3>
 <p><strong>Numero Ordine:</strong> <span id="successOrderId"></span></p>
 <p><strong>Cliente:</strong> <span id="successClientName"></span></p>
 <p><strong>Totale:</strong> € <span id="successTotal"></span></p>
 <p><strong>Data:</strong> <span id="successDate"></span></p>
 </div>
 <div class="paypal-section">
-<h3>💳 Paga ora con PayPal</h3>
+<h3> Paga ora con PayPal</h3>
 <p>Clicca il pulsante per completare il pagamento:</p>
 <a id="paypalLink" href="#" target="_blank" class="paypal-btn">💳 Paga con PayPal</a>
 <p style="font-size:13px;color:#666;margin-top:10px">Verrai redirectato su PayPal per completare il pagamento in sicurezza.</p>
@@ -155,8 +155,8 @@ Email: weddinggel@aruba.it
 <div class="pickup-info">
 <h3>📍 Ritiro Prodotti</h3>
 <p>Il ritiro avviene presso il nostro Studio:</p>
-<p>📌 Via Ciarrocco, 21 – Canicattì (AG)</p>
-<p>📞 Tel: 3206337370 - 3669381103</p>
+<p> Via Ciarrocco, 21 – Canicattì (AG)</p>
+<p> Tel: 3206337370 - 3669381103</p>
 <p>📧 Email: weddinggel@aruba.it</p>
 <p>⚠️ Eventuali spedizioni sono a carico del cliente.</p>
 </div>
@@ -172,15 +172,6 @@ const ADMIN_PASSWORD = '12763Mlg';
 let currentClient = null;
 let currentPhoto = null;
 let cart = [];
-
-const urlParams = new URLSearchParams(window.location.search);
-const mode = urlParams.get('mode');
-
-if (mode === 'admin') {
-    showAdminLogin();
-} else if (mode === 'client') {
-    showClientLogin();
-}
 
 function showAdminLogin() {
     document.getElementById('loginSection').style.display = 'none';
