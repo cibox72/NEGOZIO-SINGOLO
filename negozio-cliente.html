@@ -114,7 +114,7 @@ Email: weddinggel@aruba.it
 <h2>Ordine Inviato con Successo!</h2>
 <p class="thanks-message">Grazie per aver scelto G&L Studio!<br>Il tuo ordine è stato registrato correttamente.</p>
 <div class="order-summary">
-<h3>📋 Riepilogo Ordine</h3>
+<h3> Riepilogo Ordine</h3>
 <p><strong>Numero Ordine:</strong> <span id="successOrderId"></span></p>
 <p><strong>Cliente:</strong> <span id="successClientName"></span></p>
 <p><strong>Totale:</strong> € <span id="successTotal"></span></p>
@@ -127,7 +127,7 @@ Email: weddinggel@aruba.it
 <p style="font-size:13px;color:#666;margin-top:10px">Verrai reindirizzato a PayPal per pagare l'importo di <strong>€ <span id="paypalAmount"></span></strong> all'indirizzo:<br><strong>mairaluigi@hotmail.it</strong></p>
 </div>
 <div class="contact-info">
-<h3>📞 Contatta lo Studio</h3>
+<h3> Contatta lo Studio</h3>
 <p><strong>Grazie per il tuo ordine!</strong></p>
 <p>Lo studio ti contatterà presto per:</p>
 <p>✅ Confermare la disponibilità dei prodotti</p>
@@ -136,7 +136,7 @@ Email: weddinggel@aruba.it
 <p style="margin-top:15px"><strong>Per informazioni immediate:</strong></p>
 <p>📞 Tel: 3206337370 - 3669381103</p>
 <p>📧 Email: weddinggel@aruba.it</p>
-<p>📍 Via Ciarrocco, 21 – Canicattì (AG)</p>
+<p> Via Ciarrocco, 21 – Canicattì (AG)</p>
 <p style="margin-top:15px;font-size:13px;color:#666">⚠️ Eventuali spedizioni sono a carico del cliente.</p>
 </div>
 <button class="btn btn-primary" onclick="location.reload()" style="margin-top:20px">🔄 Torna all'inizio</button>
@@ -182,7 +182,7 @@ function openProductModal(photoUrl, photoName, albumName) {
     document.getElementById('modalPhotoPreview').src = photoUrl;
     const db = getShopDB();
     const categories = ['stampa', 'tele', 'forex', 'gadget', 'plex'];
-    const catLabels = { stampa: '🖼️ Stampe', tele: '🖼️ Tele', forex: '🖼️ Forex', gadget: '🎁 Gadget', plex: '🖼️ Plexiglass' };
+    const catLabels = { stampa: '🖼️ Stampe', tele: '️ Tele', forex: '🖼️ Forex', gadget: '🎁 Gadget', plex: '🖼️ Plexiglass' };
     let html = '';
     categories.forEach(function(cat) {
         const products = db.products.filter(function(p) { return p.category === cat; });
@@ -270,47 +270,20 @@ function completeOrder() {
     db.orders.push(order);
     saveShopDB(db);
     
-    // ✅ PDF per il cliente (riepilogo ordine)
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    doc.setFontSize(22);
-    doc.text('G&L Studio - Ordine Negozio', 20, 25);
-    doc.setFontSize(12);
-    doc.text('Ordine N.: ' + orderId, 20, 40);
-    doc.text('Cliente: ' + currentClient.name, 20, 50);
-    doc.text('Codice: ' + currentClient.code, 20, 60);
-    doc.text('Data: ' + order.date, 20, 70);
-    doc.line(20, 90, 190, 90);
-    doc.setFontSize(14);
-    doc.text('Prodotti ordinati:', 20, 105);
-    let y = 115;
-    doc.setFontSize(11);
-    cart.forEach(function(item, i) {
-        doc.text((i + 1) + '. ' + item.productName, 25, y);
-        doc.text('   Album: ' + item.albumName, 25, y + 6);
-        doc.text('   Foto: ' + item.photoName, 25, y + 12);
-        doc.text('   Prezzo: € ' + item.price.toFixed(2), 25, y + 18);
-        y += 30;
-        if (y > 270) { doc.addPage(); y = 20; }
-    });
-    doc.line(20, y, 190, y);
-    doc.setFontSize(18);
-    doc.setTextColor(231, 76, 60);
-    doc.text('TOTALE: € ' + total.toFixed(2), 20, y + 15);
-    doc.save('ORDINE_' + orderId + '.pdf');
+    // ❌ RIMOSSO: Download PDF al cliente (serve solo allo studio)
     
-    // ✅ LINK PAYPAL AGGIORNATO CON LA TUA EMAIL
+    // ✅ LINK PAYPAL CON LA TUA EMAIL
     const paypalEmail = 'mairaluigi@hotmail.it';
     const paypalUrl = 'https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=' + encodeURIComponent(paypalEmail) + '&currency_code=EUR&amount=' + total.toFixed(2) + '&item_name=Ordine_G_Studio_' + orderId;
     
-    // Mostra schermata successo
+    // ✅ Mostra schermata successo (SOLO MESSAGGIO RINGRAZIAMENTO)
     document.getElementById('clientSection').style.display = 'none';
     document.getElementById('successScreen').style.display = 'block';
     document.getElementById('successOrderId').textContent = orderId;
     document.getElementById('successClientName').textContent = currentClient.name;
     document.getElementById('successTotal').textContent = total.toFixed(2);
     document.getElementById('successDate').textContent = order.date;
-    document.getElementById('paypalAmount').textContent = total.toFixed(2); // Mostra l'importo nel testo
+    document.getElementById('paypalAmount').textContent = total.toFixed(2);
     document.getElementById('paypalLink').href = paypalUrl;
     
     cart = [];
